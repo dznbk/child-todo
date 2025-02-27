@@ -15,11 +15,6 @@ import {
 } from '../store/taskStore';
 import { formatDate } from '../utils/dateUtils';
 
-// 開発環境でのみ日付リセットテスターをインポート
-const DateResetTester = import.meta.env.DEV
-  ? React.lazy(() => import('../components/dev/DateResetTester'))
-  : null;
-
 type TaskPageProps = {
   userName: string;
   onSignOut?: () => void;
@@ -95,14 +90,7 @@ const TaskPage: React.FC<TaskPageProps> = ({ userName, onSignOut }) => {
           onToggle={handleToggleTask}
           onEdit={handleEditTask}
           onDelete={handleDeleteTask}
-        />
-        
-        {/* 開発環境でのみ日付リセットテスターを表示 */}
-        {import.meta.env.DEV && DateResetTester && (
-          <React.Suspense fallback={<div>Loading tester...</div>}>
-            <DateResetTester />
-          </React.Suspense>
-        )}
+        />        
       </div>
     </AppLayout>
   );
