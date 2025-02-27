@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import SetupPage from './pages/SetupPage';
 import TaskPage from './pages/TaskPage';
+import { getLastResetDate, saveLastResetDate } from './store/taskStore';
 
 // ローカルストレージのキー
 const USER_NAME_KEY = 'childTodo_userName';
@@ -15,6 +16,13 @@ function App() {
     if (storedName) {
       setUserName(storedName);
     }
+    
+    // アプリ起動時に最後のリセット日時が存在しない場合は初期化
+    const lastReset = getLastResetDate();
+    if (!lastReset || isNaN(lastReset.getTime())) {
+      saveLastResetDate(new Date());
+    }
+    
     setIsLoading(false);
   }, []);
 
