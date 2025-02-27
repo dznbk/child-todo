@@ -1,9 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import React from 'react';
+import { useAtom } from 'jotai';
 import AppLayout from '../components/layout/AppLayout';
 import TaskList from '../components/features/TaskList';
 import TaskForm from '../components/features/TaskForm';
-import { Task } from '../components/features/TaskItem';
+import Button from '../components/common/Button';
+import {
+  persistTasksAtom,
+  addTask,
+  toggleTask,
+  editTask,
+  deleteTask,
+  resetTasksStatus,
+  getLastResetDate
+} from '../store/taskStore';
+import { formatDate } from '../utils/dateUtils';
 
 type TaskPageProps = {
   userName: string;
@@ -11,40 +21,31 @@ type TaskPageProps = {
 };
 
 const TaskPage: React.FC<TaskPageProps> = ({ userName, onSignOut }) => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useAtom(persistTasksAtom);
+
+  // タスクをリセット
+  const handleResetTasks = () => {
+    setTasks(resetTasksStatus(tasks));
+  };
 
   // タスクの追加
   const handleAddTask = (title: string) => {
-    const newTask: Task = {
-      id: uuidv4(),
-      title,
-      completed: false,
-    };
-    
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+    setTasks(addTask(tasks, title));
   };
 
   // タスクの完了状態の切り替え
   const handleToggleTask = (id: string, completed: boolean) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, completed } : task
-      )
-    );
+    setTasks(toggleTask(tasks, id, completed));
   };
 
   // タスクの編集
   const handleEditTask = (id: string, title: string) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, title } : task
-      )
-    );
+    setTasks(editTask(tasks, id, title));
   };
 
   // タスクの削除
   const handleDeleteTask = (id: string) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+    setTasks(deleteTask(tasks, id));
   };
 
   // ヘッダーコンポーネント
@@ -67,6 +68,21 @@ const TaskPage: React.FC<TaskPageProps> = ({ userName, onSignOut }) => {
   return (
     <AppLayout header={Header}>
       <div className="max-w-2xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <p className="text-sm text-gray-500">
+              最終リセット: {formatDate(getLastResetDate())}
+            </p>
+          </div>
+          <Button
+            onClick={handleResetTasks}
+            size="sm"
+            variant="secondary"
+          >
+            タスクをリセット
+          </Button>
+        </div>
+
         <TaskForm onAddTask={handleAddTask} className="mb-8" />
         
         <TaskList
@@ -74,7 +90,7 @@ const TaskPage: React.FC<TaskPageProps> = ({ userName, onSignOut }) => {
           onToggle={handleToggleTask}
           onEdit={handleEditTask}
           onDelete={handleDeleteTask}
-        />
+        />        
       </div>
     </AppLayout>
   );
