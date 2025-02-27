@@ -1,9 +1,9 @@
+/* Nunito フォントの読み込み（Google Fontsから） */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Nunito フォントの読み込み（Google Fontsから） */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap');
 
 /* カスタムスタイル */
 @layer base {
