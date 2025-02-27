@@ -17,7 +17,7 @@ export const tasksAtom = atom<Task[]>(getInitialTasks());
 // タスクリストの永続化
 export const persistTasksAtom = atom(
   (get) => get(tasksAtom),
-  (get, set, newTasks: Task[]) => {
+  (_get, set, newTasks: Task[]) => {
     set(tasksAtom, newTasks);
     localStorage.setItem(TASKS_KEY, JSON.stringify(newTasks));
   }
